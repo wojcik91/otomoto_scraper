@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 from time import sleep
+import queue
 
 ENTRYPOINT_URL = "https://www.otomoto.pl/osobowe/toyota/auris/?search%5Bbrand_program_id%5D%5B0%5D=&search%5Bcountry%5D=&page=53"
 
@@ -27,10 +28,13 @@ def get_all_listings(soup):
 
 if __name__ == "__main__":
     page_url = ENTRYPOINT_URL
+    q = queue.SimpleQueue()
 
+    # put every listing found in a queue
     while(page_url):
         soup = get_page_soup(page_url)
         offer_list = get_all_listings(soup)
-        print(len(offer_list))
+        for offer in offer_list:
+            q.put(offer)
         page_url = get_next_page_url(soup)
         sleep(0.1)
