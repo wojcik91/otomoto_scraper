@@ -64,3 +64,15 @@ if __name__ == "__main__":
     engine = create_engine('sqlite:///otomoto.db')
     Session = sessionmaker(bind=engine)
     session = Session()
+    # go through every listing and insert data into the database
+    while(not q.empty()):
+        listing = q.get()
+        try:
+            (id, brand, model, year, mileage, engine_capacity, fuel_type, price) = get_car_data(listing)
+        except ValueError as e:
+            print(e.args)
+            continue
+        car = Listing(id=id, brand=brand, model=model, year=year, mileage=mileage, engine_capacity=engine_capacity, fuel_type=fuel_type, price=price)
+        session.add(car)
+    session.commit()
+    session.close()
