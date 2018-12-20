@@ -60,3 +60,7 @@ if __name__ == "__main__":
             q.put(offer)
         page_url = get_next_page_url(soup)
         sleep(0.1)
+
+    engine = create_engine('sqlite:///otomoto.db')
+    Session = sessionmaker(bind=engine)
+    session = Session()
