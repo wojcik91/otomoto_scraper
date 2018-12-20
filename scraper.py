@@ -29,6 +29,25 @@ def get_all_listings(soup):
     return listings
 
 
+def get_car_data(listing):
+    id = int(listing['data-ad-id'])
+    title = listing.find('a', class_='offer-title__link')['title']
+    brand = title.split(' ')[0]
+    model = title.split(' ')[1]
+    try:
+        year = int(listing.find(attrs={'data-code': 'year'}).span.string)
+        mileage_string = listing.find(attrs={'data-code': 'mileage'}).span.string.split(' ')
+        mileage = int(''.join(mileage_string[:-1]))
+        engine_capacity_string = listing.find(attrs={'data-code': 'engine_capacity'}).span.string.split(' ')
+        engine_capacity = int(''.join(engine_capacity_string[:-1]))
+        fuel_type = listing.find(attrs={'data-code': 'fuel_type'}).span.string
+    except(AttributeError):
+        raise ValueError(f'Incomplete data for ID={id}. Discarding listing...') 
+    price_string = listing.find('span', class_='offer-price__number').text.split(' ')
+    price = int(''.join(price_string[:-1]).replace(',', '.'))
+    return (id, brand, model, year, mileage, engine_capacity, fuel_type, price)
+
+
 if __name__ == "__main__":
     page_url = ENTRYPOINT_URL
     q = queue.SimpleQueue()
