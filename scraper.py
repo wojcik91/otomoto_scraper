@@ -2,6 +2,9 @@ from bs4 import BeautifulSoup
 import requests
 from time import sleep
 import queue
+from sqlalchemy import create_engine
+from models import Listing
+from sqlalchemy.orm import sessionmaker
 
 ENTRYPOINT_URL = "https://www.otomoto.pl/osobowe/toyota/auris/?search%5Bbrand_program_id%5D%5B0%5D=&search%5Bcountry%5D=&page=53"
 
