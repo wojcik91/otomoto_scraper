@@ -55,27 +55,42 @@ if __name__ == "__main__":
     page_url = ENTRYPOINT_URL
     q = queue.SimpleQueue()
 
+    engine = create_engine('sqlite:///otomoto.db')
+    Session = sessionmaker(bind=engine)
+    session = Session()
+
     # put every listing found in a queue
+    page_counter = 1
     while(page_url):
         soup = get_page_soup(page_url)
         offer_list = get_all_listings(soup)
         for offer in offer_list:
             q.put(offer)
         page_url = get_next_page_url(soup)
+        # go through every listing and insert data into the database
+        queue_size = q.qsize()
+        listing_counter = 1
+        while(not q.empty()):
+            listing = q.get()
+            try:
+                (id, brand, model, year, mileage, engine_capacity, fuel_type, price) = get_car_data(listing)
+            except ValueError as e:
+                print(e.args)
+                continue
+            except IndexError as ie:
+                print(ie.args)
+                continue
+                
+            if(session.query(Listing).filter_by(id=id).first()):
+                print('Listing already in the database...')
+            else:
+                car = Listing(id=id, brand=brand, model=model, year=year, mileage=mileage, engine_capacity=engine_capacity, fuel_type=fuel_type, price=price)
+                session.add(car)
+                session.commit()
+            listing_counter += 1
+
+        page_url = get_next_page_url(soup)
+        page_counter += 1
         sleep(0.1)
 
-    engine = create_engine('sqlite:///otomoto.db')
-    Session = sessionmaker(bind=engine)
-    session = Session()
-    # go through every listing and insert data into the database
-    while(not q.empty()):
-        listing = q.get()
-        try:
-            (id, brand, model, year, mileage, engine_capacity, fuel_type, price) = get_car_data(listing)
-        except ValueError as e:
-            print(e.args)
-            continue
-        car = Listing(id=id, brand=brand, model=model, year=year, mileage=mileage, engine_capacity=engine_capacity, fuel_type=fuel_type, price=price)
-        session.add(car)
-    session.commit()
     session.close()
