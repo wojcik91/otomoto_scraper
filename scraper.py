@@ -6,7 +6,7 @@ from sqlalchemy import create_engine
 from models import Listing
 from sqlalchemy.orm import sessionmaker
 
-ENTRYPOINT_URL = "https://www.otomoto.pl/osobowe/toyota/auris/?search%5Bbrand_program_id%5D%5B0%5D=&search%5Bcountry%5D=&page=1"
+ENTRYPOINT_URL = "https://www.otomoto.pl/osobowe/toyota/?search%5Bbrand_program_id%5D%5B0%5D=&search%5Bcountry%5D="
 
 
 def get_page_soup(url):
