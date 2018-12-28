@@ -62,15 +62,18 @@ if __name__ == "__main__":
     # put every listing found in a queue
     page_counter = 1
     while(page_url):
+        print(f"Processing page #{page_counter}...")
         soup = get_page_soup(page_url)
         offer_list = get_all_listings(soup)
+        print(f'Found {len(offer_list)} listings in page #{page_counter}...')
         for offer in offer_list:
             q.put(offer)
-        page_url = get_next_page_url(soup)
+        print(f'Current queue size: {q.qsize()}')
         # go through every listing and insert data into the database
         queue_size = q.qsize()
         listing_counter = 1
         while(not q.empty()):
+            print(f'Processing listing {listing_counter}/{queue_size} on page #{page_counter}...')
             listing = q.get()
             try:
                 (id, brand, model, year, mileage, engine_capacity, fuel_type, price) = get_car_data(listing)
