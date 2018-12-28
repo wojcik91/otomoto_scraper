@@ -16,9 +16,12 @@ def get_page_soup(url):
 
 
 def get_next_page_url(soup):
-    next_button = soup.find('ul', class_='om-pager').find('li', class_='next abs')
-    if(next_button):
-        next_url = next_button.a['href']
+    if(soup):
+        next_button = soup.find('ul', class_='om-pager').find('li', class_='next abs')
+        if(next_button):
+            next_url = next_button.a['href']
+        else:
+            next_url = None
     else:
         next_url = None
     return next_url
