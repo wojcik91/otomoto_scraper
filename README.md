@@ -1,5 +1,48 @@
 # otomoto_scraper
 Web scraper for downloading listings from otomoto.pl. I made it because I'm trying to sell my car and wanted to know how much it's actually worth. The script goes through the site page by page and inserts listings into an SQLite database for further processing.
+## Prerequisites
+
+You should start by visiting otomoto.pl and using their filtering tools to narrow down which cars you want to download. Then use the generated URL as an entrypoint for the script. For example the URL for all available Toyotas is:
+
+```
+https://www.otomoto.pl/osobowe/toyota/?search%5Bbrand_program_id%5D%5B0%5D=&search%5Bcountry%5D=
+```
+
+The scraper uses links at the bottom of the page to find the next one and repeats the process until it reaches the end.
+
+## Installation
+
+The script itself is pure Python, so it doesn't require any installation. Just create a virtual environment:
+
+```bash
+python3 -m venv env
+```
+
+Then install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Before running the scraper for the first time you have to initialize a local SQLite database:
+
+```bash
+python db_create.py
+```
+
+## Usage
+
+Activate your virtual environment:
+
+```bash
+source env/bin/activate
+```
+
+Then simply run the scraper:
+
+```bash
+python scraper.py
+```
 
 ## Warning
 
